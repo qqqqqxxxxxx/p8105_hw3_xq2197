@@ -83,3 +83,42 @@ instacart %>%
     values_from = mean_hour
   )
 ```
+
+### Problem 2
+
+```{r}
+accel = read.csv("./data/accel_data.csv") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "minute_of_day",
+    names_prefix = "activity_",
+    values_to = "activity_count"
+  ) %>%
+  mutate(
+    weekday_vs_weekend = case_when(
+      day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday") ~ "weekday",
+      day %in% c("Saturday", "Sunday") ~ "weekend"
+    ),
+    minute_of_day = as.numeric(minute_of_day),
+    day = as.factor(day)
+  ) %>%
+  select(week, day_id, day_name = day, everything())
+```
+
+The dataset accel contains `r nrow(accel)` observations and `r ncol(accel)` columns. Variables include week, day_id, day_name, minute_of_day, activity_count, and weekday_vs_weekend.
+
+Aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals.
+
+```{r}
+accel %>%
+  group_by(week, day_name = forcats::fct_relevel(day_name, c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))) %>%
+  summarise(total_activity = sum(activity_count)) %>%
+  knitr::kable()
+```
+
+There is no apparent trend.
+
+```{r}
+
+```
