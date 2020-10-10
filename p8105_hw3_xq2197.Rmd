@@ -138,6 +138,8 @@ We can observe from the graph that the male tended to move more on Sunday noon a
 
 ### Problem 3
 
+Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
+
 ```{r}
 data("ny_noaa")
 nyweather = 
@@ -154,3 +156,28 @@ nyweather =
 ```
 
 This dataset records the weather conditions for all New York stations from January 1, 1981 through December 31, 2010, which contains `r nrow(nyweather)` rows and `r ncol(nyweather)` columns. Variables include year, month, day, prcp (precipitation (mm)), snow (snowfall (mm)), snwd (snow depth (mm)), tmax (maximum temperature (degrees C)), and tmin (minimum temperature (degrees C)). The original dataset contains `r nrow(ny_noaa)` observations, and `r nrow(ny_noaa) - nrow(nyweather)` observations with missing data were removed, so missing data is an important issue. 
+
+```{r}
+nyweather %>%
+  count(snow) %>%
+  arrange(desc(n))
+```
+
+The most 3 commonly observed values is 0, 25, and 13 in order. Since snowfall is usually observed in winter. For most of the time, there is no snowfall.
+
+Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+
+```{r}
+nyweather %>%
+  filter(month %in% c("01", "07")) %>%
+  group_by(month, id, year) %>%
+  summarise(n = mean(tmax)) %>%
+  ggplot(aes(x = year, y = n, group = id)) +
+  geom_point() + 
+  geom_path() +
+  facet_grid(. ~ month) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(y = "Average maximum temperature (C)")
+```
+
+First, the average max temperature in July of all years are higher than the average max temperature in January of all years. Outliers include Jan 1982, Jan 1996, Jan 1997, Jul 1988, Jul 2007, and so on. The data collected in July in different stations varies less, compared to the data collected in January. We can observe larger fluctuations in January temperature across years, compared to July temperature.
