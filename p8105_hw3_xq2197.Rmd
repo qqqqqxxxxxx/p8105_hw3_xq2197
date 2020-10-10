@@ -8,6 +8,7 @@ output: github_document
 library(tidyverse)
 library(p8105.datasets)
 library(ggridges)
+library(patchwork)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -129,7 +130,7 @@ accel %>%
   geom_smooth(se = FALSE) + 
   theme(legend.position = "bottom") +
   labs(
-  title = "Activity plot",
+    title = "Activity plot",
     caption = "Data from the accel dataset"
   )
 ```
@@ -180,4 +181,31 @@ nyweather %>%
   labs(y = "Average maximum temperature (C)")
 ```
 
-First, the average max temperature in July of all years are higher than the average max temperature in January of all years. Outliers include Jan 1982, Jan 1996, Jan 1997, Jul 1988, Jul 2007, and so on. The data collected in July in different stations varies less, compared to the data collected in January. We can observe larger fluctuations in January temperature across years, compared to July temperature.
+First, the average max temperature in July of all years are higher than the average max temperature in January of all years. Outliers include Jan 1982, Jan 1996, Jan 1997, Jul 1988, Jul 2007, and so on. The data collected in July in different stations varies less, compared to the data collected in January. We can observe larger fluctuations in January temperature across years, compared to July temperature. Since using geom_smooth() and "color = id" would make my computer crash, I used geom_path() instead. As a result, I cannot figure out which line represents which station.
+
+Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+
+```{r}
+t_plot_p = 
+  nyweather %>%
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_hex() +
+  labs(
+    title = "tmax vs tmin",
+    caption = "Data from the ny_noaa dataset"
+  )
+
+s_plot_p = 
+  nyweather %>%
+  filter(snow > 0 & snow < 100) %>%
+  ggplot(aes(x = year, y = snow)) +
+  geom_boxplot() +  
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  labs(
+  title = "snowfall distribution",
+  caption = "Data from the ny_noaa dataset"
+  )
+
+t_plot_p + s_plot_p 
+  
+```
