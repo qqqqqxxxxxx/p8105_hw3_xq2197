@@ -138,3 +138,19 @@ We can observe from the graph that the male tended to move more on Sunday noon a
 
 ### Problem 3
 
+```{r}
+data("ny_noaa")
+nyweather = 
+  ny_noaa %>%
+  mutate(
+    ny_noaa,
+    prcp = prcp/10,
+    tmax = as.numeric(tmax)/10,
+    tmin = as.numeric(tmin)/10
+  ) %>%
+  janitor::clean_names() %>%
+  drop_na() %>%
+  separate(date, c("year", "month", "day"))
+```
+
+This dataset records the weather conditions for all New York stations from January 1, 1981 through December 31, 2010, which contains `r nrow(nyweather)` rows and `r ncol(nyweather)` columns. Variables include year, month, day, prcp (precipitation (mm)), snow (snowfall (mm)), snwd (snow depth (mm)), tmax (maximum temperature (degrees C)), and tmin (minimum temperature (degrees C)). The original dataset contains `r nrow(ny_noaa)` observations, and `r nrow(ny_noaa) - nrow(nyweather)` observations with missing data were removed, so missing data is an important issue. 
