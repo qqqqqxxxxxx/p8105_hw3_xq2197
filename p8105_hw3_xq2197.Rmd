@@ -7,6 +7,7 @@ output: github_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(p8105.datasets)
+library(ggridges)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -117,8 +118,23 @@ accel %>%
   knitr::kable()
 ```
 
-There is no apparent trend.
+According to the table, we can notice that the male usually had more activity accounts on Thursday, Friday, Saturday, and Sunday. Additionally, the activity count seems more stable in week 2 and week 3.
+
+Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
 
 ```{r}
-
+accel %>%
+  mutate(day_name = forcats::fct_relevel(day_name, c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))) %>%
+  ggplot(aes(x = minute_of_day, y = activity_count, color = day_name)) + 
+  geom_smooth(se = FALSE) + 
+  theme(legend.position = "bottom") +
+  labs(
+  title = "Activity plot",
+    caption = "Data from the accel dataset"
+  )
 ```
+
+We can observe from the graph that the male tended to move more on Sunday noon and Friday night. On other days, the activity count of the male were relatively more stable.
+
+### Problem 3
+
